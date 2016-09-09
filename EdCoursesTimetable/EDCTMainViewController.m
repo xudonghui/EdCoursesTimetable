@@ -1,0 +1,109 @@
+//
+//  EDCTMainViewController.m
+//  EdCoursesTimetable
+//
+//  Created by Xu Donghui on 08/09/2016.
+//  Copyright © 2016 Xu Donghui's. All rights reserved.
+//
+
+#import "EDCTMainViewController.h"
+#import "EDCTCoursesManager.h"
+
+@interface EDCTMainViewController ()
+
+@end
+
+@implementation EDCTMainViewController
+
+extern NSString *kDidGetCoursesNotificationName;
+extern NSString *kfailGetCoursesNotificationName;
+
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+    if(self = [super init]){
+        
+    }
+    return self;
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    if (![EDCTPreferences sharedInstance].hasSeenTimetable) {
+        [self refresh];
+    } else {
+        NSString *filePath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/myCourses"];
+        NSData *data = [NSData dataWithContentsOfFile:filePath];
+        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+        NSArray *allCourses = [unarchiver decodeObjectForKey:@"allCourses"];
+        
+        [self updateLabelsWithCourses:allCourses];
+    }
+    
+    [self refresh];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTimeTable) name:kDidGetCoursesNotificationName object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(failGetCourses) name:kfailGetCoursesNotificationName object:nil];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (IBAction)refreshCourses:(id)sender
+{
+    [self refresh];
+}
+
+- (void)updateTimeTable
+{
+    NSLog(@"Did update courses");
+    
+    //Creat New Files
+    NSString *filePath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/myCourses"];
+    //Archiver
+    NSMutableData *dataArea = [NSMutableData data];
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:dataArea];
+    [archiver encodeObject:[EDCTCoursesManager sharedCourcesManager].myCourses forKey:@"allCourses"];
+    [archiver finishEncoding];
+    [dataArea writeToFile:filePath atomically:YES];
+    
+    [self updateLabelsWithCourses:[EDCTCoursesManager sharedCourcesManager].myCourses];
+}
+
+- (void)failGetCourses
+{
+    
+}
+
+- (void)refresh
+{
+    [[EDCTCoursesManager sharedCourcesManager] retriveCourses];
+}
+
+- (void)updateLabelsWithCourses:(NSArray *)allCourses
+{
+    //TODO:Update course labels according to courses data
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

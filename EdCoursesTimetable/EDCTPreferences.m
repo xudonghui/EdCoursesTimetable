@@ -23,7 +23,7 @@
         {
             NSLog(@"App first launched");
             self.firstInstalled = version;
-            self.hasSeenTimetable = NO;
+            self.hasSeenTimetable = YES;
         }
     }
     return self;

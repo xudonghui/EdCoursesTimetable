@@ -18,14 +18,6 @@
 extern NSString *kDidGetCoursesNotificationName;
 extern NSString *kfailGetCoursesNotificationName;
 
--(id)initWithCoder:(NSCoder *)aDecoder
-{
-    if(self = [super init]){
-        
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -33,11 +25,7 @@ extern NSString *kfailGetCoursesNotificationName;
     if (![EDCTPreferences sharedInstance].hasSeenTimetable) {
         [self refresh];
     } else {
-        NSString *filePath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/myCourses"];
-        NSData *data = [NSData dataWithContentsOfFile:filePath];
-        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-        NSArray *allCourses = [unarchiver decodeObjectForKey:@"allCourses"];
-        
+        NSArray *allCourses = [[EDCTCoursesManager sharedCourcesManager] unarchiverCourses];
         [self updateLabelsWithCourses:allCourses];
     }
     
@@ -69,14 +57,7 @@ extern NSString *kfailGetCoursesNotificationName;
 {
     NSLog(@"Did update courses");
     
-    //Creat New Files
-    NSString *filePath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/myCourses"];
-    //Archiver
-    NSMutableData *dataArea = [NSMutableData data];
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:dataArea];
-    [archiver encodeObject:[EDCTCoursesManager sharedCourcesManager].myCourses forKey:@"allCourses"];
-    [archiver finishEncoding];
-    [dataArea writeToFile:filePath atomically:YES];
+    [[EDCTCoursesManager sharedCourcesManager] saveCourses:[EDCTCoursesManager sharedCourcesManager].myCourses];
     
     [self updateLabelsWithCourses:[EDCTCoursesManager sharedCourcesManager].myCourses];
 }

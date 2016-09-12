@@ -52,6 +52,28 @@ NSString *kfailGetCoursesNotificationName = @"failGetCourses";
     }];
 }
 
+- (void)saveCourses:(NSArray *)courses
+{
+    //Creat New Files
+    NSString *filePath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/myCourses"];
+    //Archiver
+    NSMutableData *dataArea = [NSMutableData data];
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:dataArea];
+    [archiver encodeObject:courses forKey:@"allCourses"];
+    [archiver finishEncoding];
+    [dataArea writeToFile:filePath atomically:YES];
+}
+
+- (NSArray *)unarchiverCourses
+{
+    NSString *filePath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingString:@"/myCourses"];
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
+    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    NSArray *allCourses = [unarchiver decodeObjectForKey:@"allCourses"];
+    
+    return allCourses;
+}
+
 - (void)postDidGetCoursesNotification
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:kDidGetCoursesNotificationName object:nil];

@@ -16,5 +16,8 @@
 + (instancetype)sharedCourcesManager;
 // Singleton Method
 - (void)retriveCourses;
+- (void)saveCourses:(NSArray *)courses;
+- (NSArray *)unarchiverCourses;
+- (void)deleteCourse;
 
 @end

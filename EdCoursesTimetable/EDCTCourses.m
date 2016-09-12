@@ -40,4 +40,32 @@
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super init]) {
+        self.fullCode = [aDecoder decodeObjectForKey:@"fullCode"];
+        self.courseName = [aDecoder decodeObjectForKey:@"name"];
+        self.building = [aDecoder decodeObjectForKey:@"building"];
+        self.campus = [aDecoder decodeObjectForKey:@"campus"];
+        self.room = [aDecoder decodeObjectForKey:@"room"];
+        self.dayVerbose = [aDecoder decodeObjectForKey:@"dayVerbose"];
+        self.start = [aDecoder decodeObjectForKey:@"start"];
+        self.end = [aDecoder decodeObjectForKey:@"end"];
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    [aCoder encodeObject:self.fullCode forKey:@"fullCode"];
+    [aCoder encodeObject:self.courseName forKey:@"name"];
+    [aCoder encodeObject:self.building forKey:@"building"];
+    [aCoder encodeObject:self.campus forKey:@"campus"];
+    [aCoder encodeObject:self.room forKey:@"room"];
+    [aCoder encodeObject:self.dayVerbose forKey:@"dayVerbose"];
+    [aCoder encodeObject:self.start forKey:@"start"];
+    [aCoder encodeObject:self.end forKey:@"end"];
+}
+
 @end

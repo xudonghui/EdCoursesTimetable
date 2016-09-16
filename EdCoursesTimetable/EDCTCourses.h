@@ -17,6 +17,7 @@
 @property (nonatomic, copy) NSString *building;
 @property (nonatomic, copy) NSString *campus;
 @property (nonatomic, copy) NSString *dayVerbose;
+@property (nonatomic, copy) NSNumber *dayInt;
 @property (nonatomic, copy) NSNumber *start;
 @property (nonatomic, copy) NSNumber *end;
 @property (nonatomic, copy) NSArray  *weekPattern;

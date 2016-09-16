@@ -18,9 +18,21 @@
     self.building = [(NSArray *)dictionary[@"location"] objectAtIndex:0][@"building"];
     self.campus = [(NSArray *)dictionary[@"location"] objectAtIndex:0][@"campus"];
     self.room = [(NSArray *)dictionary[@"location"] objectAtIndex:0][@"room"];
-    self.dayVerbose = [NSString stringWithString:dictionary[@"day_verbose"] ];  //The same as "type".
-    self.start = dictionary[@"start"];
-    self.end = dictionary[@"end"];
+    self.dayVerbose = [NSString stringWithString:dictionary[@"day_verbose"]];  //The same as "type".
+    self.start = [NSNumber numberWithInt:(int)dictionary[@"start"]/2];
+    self.end = [NSNumber numberWithInt:((int)dictionary[@"end"]-1)/2];
+    
+    if ([self.dayVerbose isEqualToString:@"Monday"]) {
+        self.dayInt = [NSNumber numberWithInt:1];
+    } else if ([self.dayVerbose isEqualToString:@"Tuesday"]) {
+        self.dayInt = [NSNumber numberWithInt:2];
+    } else if ([self.dayVerbose isEqualToString:@"Wednesday"]) {
+        self.dayInt = [NSNumber numberWithInt:3];
+    } else if ([self.dayVerbose isEqualToString:@"Thursday"]) {
+        self.dayInt = [NSNumber numberWithInt:4];
+    } else if ([self.dayVerbose isEqualToString:@"Friday"]) {
+        self.dayInt = [NSNumber numberWithInt:5];
+    }
     
     NSString *weekPatternString = dictionary[@"week_pattern"];
     NSMutableArray *tempArray = [NSMutableArray array];
@@ -49,6 +61,7 @@
         self.campus = [aDecoder decodeObjectForKey:@"campus"];
         self.room = [aDecoder decodeObjectForKey:@"room"];
         self.dayVerbose = [aDecoder decodeObjectForKey:@"dayVerbose"];
+        self.dayInt = [aDecoder decodeObjectForKey:@"dayInt"];
         self.start = [aDecoder decodeObjectForKey:@"start"];
         self.end = [aDecoder decodeObjectForKey:@"end"];
     }
@@ -64,6 +77,7 @@
     [aCoder encodeObject:self.campus forKey:@"campus"];
     [aCoder encodeObject:self.room forKey:@"room"];
     [aCoder encodeObject:self.dayVerbose forKey:@"dayVerbose"];
+    [aCoder encodeObject:self.dayInt forKey:@"dayInt"];
     [aCoder encodeObject:self.start forKey:@"start"];
     [aCoder encodeObject:self.end forKey:@"end"];
 }

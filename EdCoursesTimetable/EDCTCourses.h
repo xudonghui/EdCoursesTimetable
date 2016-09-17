@@ -21,6 +21,7 @@
 @property (nonatomic, copy) NSNumber *start;
 @property (nonatomic, copy) NSNumber *end;
 @property (nonatomic, copy) NSArray  *weekPattern;
+@property (nonatomic, copy) NSNumber *optional;
 
 - (instancetype)initWithResponseObject:(NSDictionary *)dictionary;
 

@@ -32,6 +32,8 @@
 @property (strong, nonatomic) UILabel   * timeLabel16;
 @property (strong, nonatomic) UILabel   * timeLabel17;
 
+@property (strong, nonatomic) NSArray   * myCourses;
+
 @end
 
 @implementation EDCTMainViewController
@@ -229,12 +231,16 @@ extern NSString *kfailGetCoursesNotificationName;
         }];
     }
     
+    /*
     if (![EDCTPreferences sharedInstance].hasSeenTimetable) {
         [self refresh];
     } else {
-        NSArray *allCourses = [[EDCTCoursesManager sharedCourcesManager] unarchiverCourses];
-        [self updateLabelsWithCourses:allCourses];
+        self.myCourses = [NSArray arrayWithArray:[[EDCTCoursesManager sharedCourcesManager] unarchiverCourses]];
+        [self updateViewConstraints];
     }
+     */
+    [self refresh];
+     
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -246,6 +252,27 @@ extern NSString *kfailGetCoursesNotificationName;
 - (void)viewDidDisappear:(BOOL)animated
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)updateViewConstraints
+{
+    NSUInteger coursesLabelNum = [[EDCTCoursesManager sharedCourcesManager].myCourses count];
+    for (int i = 0; i < coursesLabelNum; i++)
+    {
+        EDCTCourses *course = [EDCTCoursesManager sharedCourcesManager].myCourses[i];
+        long start = [course.start longValue]/2;
+        long end = ([course.end longValue]-1)/2;
+        UILabel *courseLabel = (UILabel *)[self.view viewWithTag:10000+i];
+        
+        [courseLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo((start+1) * self.labelHeight);
+            make.left.mas_equalTo([course.dayInt longValue] * self.labelWidth);
+            make.width.mas_equalTo(self.labelWidth);
+            make.height.mas_equalTo((end-start+1)*self.labelHeight);
+        }];
+    }
+    
+    [super updateViewConstraints];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -263,8 +290,30 @@ extern NSString *kfailGetCoursesNotificationName;
     NSLog(@"Did update courses");
     
     [[EDCTCoursesManager sharedCourcesManager] saveCourses:[EDCTCoursesManager sharedCourcesManager].myCourses];
+    self.myCourses = [NSArray arrayWithArray:[[EDCTCoursesManager sharedCourcesManager] unarchiverCourses]];
+    NSUInteger coursesLabelNum = [self.myCourses count];
     
-    [self updateLabelsWithCourses:[EDCTCoursesManager sharedCourcesManager].myCourses];
+    for (int i = 0; i < coursesLabelNum; i++)
+    {
+        EDCTCourses *course = self.myCourses[i];
+        UILabel *courseLabel = [UILabel new];
+        courseLabel.tag = 10000 + i;
+        courseLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        courseLabel.textAlignment = NSTextAlignmentCenter;
+        courseLabel.text = course.courseName;
+        courseLabel.font = [UIFont systemFontOfSize:14.0];
+        courseLabel.backgroundColor = [UIColor redColor];
+        courseLabel.numberOfLines = 0;
+        //courseLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        courseLabel.adjustsFontSizeToFitWidth = YES;
+        courseLabel.minimumScaleFactor = 0.01;
+        [self.view addSubview:courseLabel];
+    }
+
+    [self updateViewConstraints];
+    [self.view layoutIfNeeded];
+    [self.view setNeedsLayout];
+    [self.view setNeedsDisplay];
 }
 
 - (void)failGetCourses
@@ -275,11 +324,6 @@ extern NSString *kfailGetCoursesNotificationName;
 - (void)refresh
 {
     [[EDCTCoursesManager sharedCourcesManager] retriveCourses];
-}
-
-- (void)updateLabelsWithCourses:(NSArray *)allCourses
-{
-    //TODO:Update course labels according to courses data
 }
 
 /*

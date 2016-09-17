@@ -13,14 +13,15 @@
 - (instancetype)initWithResponseObject:(NSDictionary *)dictionary
 {
     self.fullCode = [(NSArray *)dictionary[@"course"] objectAtIndex:0][@"full_code"];
-    self.courseName = dictionary[@"name"];
+    self.courseName = [(NSString *)dictionary[@"name"] stringByReplacingOccurrencesOfString:@"_" withString:@"\n"];
     self.type = [NSString stringWithString:dictionary[@"type"]];      //The value for the key "type" is a NSTaggedPointerString. Use this method to make it a NSString.
     self.building = [(NSArray *)dictionary[@"location"] objectAtIndex:0][@"building"];
     self.campus = [(NSArray *)dictionary[@"location"] objectAtIndex:0][@"campus"];
     self.room = [(NSArray *)dictionary[@"location"] objectAtIndex:0][@"room"];
     self.dayVerbose = [NSString stringWithString:dictionary[@"day_verbose"]];  //The same as "type".
-    self.start = [NSNumber numberWithInt:(int)dictionary[@"start"]/2];
-    self.end = [NSNumber numberWithInt:((int)dictionary[@"end"]-1)/2];
+    self.start = dictionary[@"start"];
+    self.end = dictionary[@"end"];
+    self.optional = dictionary[@"optional"];
     
     if ([self.dayVerbose isEqualToString:@"Monday"]) {
         self.dayInt = [NSNumber numberWithInt:1];

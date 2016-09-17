@@ -32,7 +32,7 @@ NSString *kfailGetCoursesNotificationName = @"failGetCourses";
     manager.securityPolicy.allowInvalidCertificates = YES;
     manager.securityPolicy.validatesDomainName = NO;
     [manager POST:pathUrl parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
-        //NSLog(@"JSON: %@",responseObject);
+        NSLog(@"JSON: %@",responseObject);
         
         NSMutableArray *tempArray = [NSMutableArray array];
         
